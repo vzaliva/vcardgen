@@ -1,4 +1,3 @@
-open Syntax
        
 module Group : sig
   type t 
@@ -81,4 +80,4 @@ end
 type t = {
     content_lines : Content_line.t list;
   }
-           
+
