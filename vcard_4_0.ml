@@ -1,4 +1,5 @@
 module R = Core_kernel.Result
+open Syntax
 
 type error =
   | InvalidCharacters
