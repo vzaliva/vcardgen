@@ -1,12 +1,16 @@
 open Syntax
-
+       
 module Group : sig
   type t 
   val to_string : t -> string option
+  val empty_group : t
+  val group : string ->t
 end = struct
   
   type t = string option
   let to_string g = g
+  let empty_group = None
+  let group s = Some s
 end
 
 module Name : sig
@@ -56,10 +60,12 @@ end = struct
 module Value : sig
   type t
   val to_string : t -> string
+  val value : string -> t
 end = struct
   
   type t = string
-  let to_string t = t 
+  let to_string t = t
+  let value s = s
 end
 
 module Content_line = struct
