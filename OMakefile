@@ -1,0 +1,13 @@
+# Use the byte-code compiler
+BYTE_ENABLED = true
+NATIVE_ENABLED = false
+OCAMLCFLAGS += -g
+
+USE_OCAMLFIND = true
+OCAMLPACKS[] = 
+
+FILES = vcard_4_0 printer example 
+
+#Build the program
+OCamlProgram(example, $(FILES))
+.DEFAULT: example
