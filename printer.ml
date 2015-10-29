@@ -1,10 +1,11 @@
 open Vcard_4_0
 
 let escape_value value =
-  let open Core_kernel.Std in
-  value |> String.substr_replace_all ~pattern:"\\" ~with_:"\\\\" |> 
-    String.substr_replace_all ~pattern:"\n" ~with_:"\\n" |> 
-    String.substr_replace_all ~pattern:"," ~with_:"\\,"
+  let substr_replace_all pattern swith =
+    Str.global_replace (Str.regexp_string pattern) swith in
+  value |> substr_replace_all "\\" "\\\\" |> 
+    substr_replace_all "\n" "\\n" |> 
+    substr_replace_all "," "\\,"
                               
 let rec split s out =
   match String.length s with

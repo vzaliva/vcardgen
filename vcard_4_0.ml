@@ -1,4 +1,3 @@
-module R = Core_kernel.Result
 open Syntax
 
 module Group : sig
