@@ -7,14 +7,13 @@ let escape_value value =
   String.substr_replace_all ~pattern:"," ~with_:"\\,"
   
 let rec split s out =
-  let open CamomileLibrary in
   match String.length s with
   | l when l <= 75 -> output_string out s
   | l -> 
-    let e = UTF8.prev s 76 in
-    String.sub s 0 e |> output_string out;
-    output_string out "\r\n ";
-    split (String.sub s e (l - e)) out
+     let e = Batteries.UTF8.prev s 76 in
+     String.sub s 0 e |> output_string out;
+     output_string out "\r\n ";
+     split (String.sub s e (l - e)) out
 
 let print out vcard =
   let open Content_line in
