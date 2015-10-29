@@ -75,17 +75,11 @@ module Parameter : sig
     name : string;
     values : string list;
   }
-  val of_parsed : Syntax.parameter -> (t, error) R.t
 end = struct
   
   type t = { 
     name : string;
     values : string list;
-  }
-  
-  let of_parsed (parameter : Syntax.parameter ) = R.Ok {
-    name = parameter.Syntax.name;
-    values = parameter.Syntax.values;
   }
   
 end
@@ -113,24 +107,9 @@ module Content_line = struct
     value : Value.t;
   }
 
-  let of_parsed parsed = 
-    let (>>=) = R.(>>=) in
-    Group.of_string parsed.Syntax.group >>= fun group ->
-    Name.of_string parsed.Syntax.name >>= fun name ->
-      
-    parsed.Syntax.parameters |> List.map Parameter.of_parsed |> R.all >>= fun parameters -> 
-      
-    Value.of_string parsed.Syntax.value >>= fun value ->      
-    R.Ok {group = group; name = name; parameters = parameters; value = value;}
-
 end
 
 type t = {
   content_lines : Content_line.t list;
 }
 
-let of_parsed parsed = 
-  let (>>=) = R.(>>=) in
-  parsed.Syntax.content_lines |> List.map Content_line.of_parsed |> R.all >>= fun cls ->
-  R.Ok { content_lines = cls; }
-  
