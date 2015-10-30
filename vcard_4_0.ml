@@ -78,6 +78,15 @@ module Content_line = struct
       parameters : Parameter.t list;
       value : Value.t;
     }
+  let content_line group name parameters value =
+    {
+      group = group;
+      name = name;
+      parameters = parameters;
+      value = value
+    }
+
+                  
 end
                         
 type t = {
@@ -85,15 +94,12 @@ type t = {
   }
            
 let empty : t = {content_lines = [] }
+
+let append_content_line vcard line =
+  { content_lines = List.append vcard.content_lines [line] }
+
 let append vcard group name parameters value =
-  let open Content_line in
-  { content_lines =
-      List.append vcard.content_lines
-                  [{
-                      group = group;
-                      name = name;
-                      parameters = parameters;
-                      value = value
-                    }]
-  }
+  append_content_line vcard
+    (Content_line.content_line group name parameters value)
+
                   
