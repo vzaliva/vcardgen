@@ -1,3 +1,10 @@
+(*
+Simple OCaml library for generating VCards per RFC-6350
+
+Vadim Zaliva <lord@crocodile.org> https://github.com/vzaliva/vcardgen
+
+Based on code from Dominic Price <dominic.price@nottingham.ac.uk> https://github.com/dominicjprice/sociaml-vcard
+ *)
 
 module Group : sig
   type t 
@@ -51,14 +58,14 @@ module Parameter : sig
   val parameter : string -> string -> t
   val parameters : string -> string list -> t
 end = struct
-         type t = { 
-             name : string;
-             values : string list;
-           }
+  type t = { 
+      name : string;
+      values : string list;
+    }
 
-         let parameter name value = {name=name; values=[value]}
-         let parameters name values = {name=name; values=values}
-       end
+  let parameter name value = {name=name; values=[value]}
+  let parameters name values = {name=name; values=values}
+end
         
 module Value : sig
   type t
@@ -86,36 +93,90 @@ module Content_line = struct
       value = value
     }
 end
+
+module Vcard : sig
+  type t 
+  val empty_vcard : t
+  val append_content_line: t -> Content_line.t -> t
+  val append: t -> ?group:Group.t -> Name.t -> (Parameter.t list) -> Value.t -> t
+  val append_photo: t -> ?group:Group.t -> string -> string -> t
+  val append_photo_from_file: t -> ?group:Group.t -> string -> string -> t
+  val print: out_channel -> t -> unit
+                                   
+end = struct
+  
+  type t = {
+      content_lines : Content_line.t list;
+    }
+             
+  let empty_vcard : t = {content_lines = [] }
+                          
+  let append_content_line vcard line =
+    { content_lines = List.append vcard.content_lines [line] }
+      
+  let append vcard ?group:(group=Group.empty_group) name parameters value =
+    append_content_line vcard
+                        (Content_line.content_line ~group:group name parameters value)
                         
-type t = {
-    content_lines : Content_line.t list;
-  }
+  (* convenience functions to add photo field *)
+                        
+  let append_photo vcard ?group:(group=Group.empty_group) data ptype =
+    append vcard ~group:group Name.PHOTO [
+             Parameter.parameter "type" ptype;
+             Parameter.parameter "ENCODING" "b";
+           ] (Value.string_value data)
            
-let empty : t = {content_lines = [] }
+  let append_photo_from_file vcard ?group:(group=Group.empty_group) filename ptype =
+    let open Batteries in
+    let ic = open_in filename in
+    try
+      let data = IO.read_all ic in
+      let b64data = Base64.str_encode data in
+      append_photo vcard ~group:group b64data ptype
+    with e -> 
+      close_in_noerr ic;
+      raise e
 
-let append_content_line vcard line =
-  { content_lines = List.append vcard.content_lines [line] }
+  let escape_value value =
+    let substr_replace_all pattern swith =
+      Str.global_replace (Str.regexp_string pattern) swith in
+    value |> substr_replace_all "\\" "\\\\" |> 
+      substr_replace_all "\n" "\\n" |> 
+      substr_replace_all "," "\\,"
+                         
+  let rec split s out =
+    match String.length s with
+    | l when l <= 75 -> output_string out s
+    | l -> 
+       let e = Batteries.UTF8.prev s 76 in
+       String.sub s 0 e |> output_string out;
+       output_string out "\r\n ";
+       split (String.sub s e (l - e)) out
 
-let append vcard ?group:(group=Group.empty_group) name parameters value =
-  append_content_line vcard
-    (Content_line.content_line ~group:group name parameters value)
-
-(* convenience functions to add photo field *)
-    
-let append_photo vcard ?group:(group=Group.empty_group) data ptype =
-  append vcard ~group:group Name.PHOTO [
-           Parameter.parameter "type" ptype;
-           Parameter.parameter "ENCODING" "b";
-         ] (Value.string_value data)
-         
-let append_photo_from_file vcard ?group:(group=Group.empty_group) filename ptype =
-  let open Batteries in
-  let ic = open_in filename in
-  try
-    let data = IO.read_all ic in
-    let b64data = Base64.str_encode data in
-    append_photo vcard ~group:group b64data ptype
-  with e -> 
-    close_in_noerr ic;
-    raise e
-
+  let print out vcard =
+    let open Content_line in
+    output_string out "BEGIN:VCARD\r\nVERSION:4.0\r\n";
+    vcard.content_lines |> List.iter (fun cl ->
+                               let buf = Buffer.create 75 in
+                               (match Group.to_string cl.group with 
+                                | Some g -> Buffer.add_string buf g; Buffer.add_char buf '.'
+                                | None -> ());
+                               Name.to_string cl.name |> Buffer.add_string buf;
+                               cl.parameters |> List.iter (fun p -> 
+                                                    Buffer.add_char buf ';';
+                                                    Buffer.add_string buf p.Parameter.name;
+                                                    Buffer.add_char buf '=';
+                                                    List.hd p.Parameter.values |> Buffer.add_string buf;
+                                                    List.tl p.Parameter.values |> List.iter (fun v ->
+                                                                                      Buffer.add_char buf ',';
+                                                                                      Buffer.add_string buf v)
+                                                  );
+                               Buffer.add_char buf ':';
+                               Value.to_string cl.value |> escape_value |> Buffer.add_string buf;
+                               split (Buffer.contents buf) out;
+                               output_string out "\r\n");
+    output_string out "END:VCARD\r\n"
+                  
+end
+        
+        

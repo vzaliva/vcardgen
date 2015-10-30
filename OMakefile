@@ -6,7 +6,7 @@ OCAMLCFLAGS += -g -thread
 USE_OCAMLFIND = true
 OCAMLPACKS[] = batteries
 
-FILES = vcard_4_0 printer example 
+FILES = vcard_4_0 example 
 
 #Build the program
 OCamlProgram(example, $(FILES))

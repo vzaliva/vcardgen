@@ -1,13 +1,13 @@
 open Vcard_4_0
-open Printer
        
 let () =
   let open Content_line in
+  let open Vcard in
   let ( >@ ) a b = append_content_line a b in
   let open Name in
   let open Parameter in
   let open Value in
-  let c = empty
+  let c = empty_vcard
           >@ (content_line FN [] (string_value "Vadim Zaliva"))
           >@ (content_line N [] (string_value "Zaliva; Vadim"))
           >@ (content_line EMAIL [
