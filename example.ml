@@ -4,6 +4,6 @@ open Printer
 let () =
   let open Content_line in
   let c = empty in
-  let c1 = append c Group.empty Name.FN [] (Value.from_string "Vadim Zaliva") in
+  let c1 = append c Group.empty_group Name.FN [] (Value.string_value "Vadim Zaliva") in
   print stdout c1
         

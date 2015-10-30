@@ -2,13 +2,13 @@
 module Group : sig
   type t 
   val to_string : t -> string option
-  val empty : t
-  val group : string ->t
+  val empty_group : t
+  val group : string -> t
 end = struct
   
   type t = string option
   let to_string g = g
-  let empty = None
+  let empty_group = None
   let group s = Some s
 end
 
@@ -58,12 +58,12 @@ end = struct
 module Value : sig
   type t
   val to_string : t -> string
-  val from_string : string -> t
+  val string_value : string -> t
 end = struct
   
   type t = string
   let to_string t = t
-  let from_string s = s
+  let string_value s = s
 end
 
 module Content_line = struct
