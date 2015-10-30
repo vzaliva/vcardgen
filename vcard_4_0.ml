@@ -48,11 +48,16 @@ module Parameter : sig
       name : string;
       values : string list;
     }
+  val parameter : string -> string -> t
+  val parameters : string -> string list -> t
 end = struct
          type t = { 
              name : string;
              values : string list;
            }
+
+         let parameter name value = {name=name; values=[value]}
+         let parameters name values = {name=name; values=values}
        end
         
 module Value : sig
