@@ -1,14 +1,14 @@
-       
+
 module Group : sig
   type t 
   val to_string : t -> string option
-  val empty_group : t
+  val empty : t
   val group : string ->t
 end = struct
   
   type t = string option
   let to_string g = g
-  let empty_group = None
+  let empty = None
   let group s = Some s
 end
 
@@ -49,7 +49,6 @@ module Parameter : sig
       values : string list;
     }
 end = struct
-         
          type t = { 
              name : string;
              values : string list;
@@ -59,16 +58,15 @@ end = struct
 module Value : sig
   type t
   val to_string : t -> string
-  val value : string -> t
+  val from_string : string -> t
 end = struct
   
   type t = string
   let to_string t = t
-  let value s = s
+  let from_string s = s
 end
 
 module Content_line = struct
-
   type t = {
       group : Group.t;
       name : Name.t;
@@ -80,4 +78,17 @@ end
 type t = {
     content_lines : Content_line.t list;
   }
-
+           
+let empty : t = {content_lines = [] }
+let append vcard group name parameters value =
+  let open Content_line in
+  { content_lines =
+      List.append vcard.content_lines
+                  [{
+                      group = group;
+                      name = name;
+                      parameters = parameters;
+                      value = value
+                    }]
+  }
+                  
