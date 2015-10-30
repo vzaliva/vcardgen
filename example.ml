@@ -17,15 +17,7 @@ let () =
                              Parameter.parameter "type" "INTERNET";
                              Parameter.parameter "type" "HOME";
                            ] (Value.string_value "lord@crocodile.org")) in
-
-
-  let ic = open_in "botero.jpeg" in
-  try 
-    let cp = append_photo c ic "JPEG" in
-    print stdout cp;
-    close_in ic 
-  with e -> 
-    close_in_noerr ic;
-    raise e
+  let cp = append_photo_from_file c "botero.jpeg" "JPEG" in
+  print stdout cp
   
         

@@ -100,10 +100,22 @@ let append vcard ?group:(group=Group.empty_group) name parameters value =
   append_content_line vcard
     (Content_line.content_line ~group:group name parameters value)
 
-(* convenience function to add photo field *)
-let append_photo vcard ?group:(group=Group.empty_group) inp ptype =
+(* convenience functions to add photo field *)
+    
+let append_photo vcard ?group:(group=Group.empty_group) data ptype =
   append vcard ~group:group Name.PHOTO [
-      Parameter.parameter "type" ptype;
-      Parameter.parameter "ENCODING" "b";
-    ] (Value.string_value "")
-                  
+           Parameter.parameter "type" ptype;
+           Parameter.parameter "ENCODING" "b";
+         ] (Value.string_value data)
+         
+let append_photo_from_file vcard ?group:(group=Group.empty_group) filename ptype =
+  let open Batteries in
+  let ic = open_in filename in
+  try
+    let data = IO.read_all ic in
+    let b64data = Base64.str_encode data in
+    append_photo vcard ~group:group b64data ptype
+  with e -> 
+    close_in_noerr ic;
+    raise e
+
