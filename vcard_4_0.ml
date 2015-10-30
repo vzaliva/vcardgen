@@ -3,7 +3,7 @@ Simple OCaml library for generating VCards per RFC-6350
 
 Vadim Zaliva <lord@crocodile.org> https://github.com/vzaliva/vcardgen
 
-Based on code from Dominic Price <dominic.price@nottingham.ac.uk> https://github.com/dominicjprice/sociaml-vcard
+Based on code by Dominic Price https://github.com/dominicjprice/sociaml-vcard
  *)
 
 module Group : sig
