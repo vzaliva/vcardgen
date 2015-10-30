@@ -78,15 +78,13 @@ module Content_line = struct
       parameters : Parameter.t list;
       value : Value.t;
     }
-  let content_line group name parameters value =
+  let content_line ?group:(group=Group.empty_group) name parameters value =
     {
       group = group;
       name = name;
       parameters = parameters;
       value = value
     }
-
-                  
 end
                         
 type t = {
@@ -98,8 +96,14 @@ let empty : t = {content_lines = [] }
 let append_content_line vcard line =
   { content_lines = List.append vcard.content_lines [line] }
 
-let append vcard group name parameters value =
+let append vcard ?group:(group=Group.empty_group) name parameters value =
   append_content_line vcard
-    (Content_line.content_line group name parameters value)
+    (Content_line.content_line ~group:group name parameters value)
 
+(* convenience function to add photo field *)
+let append_photo vcard ?group:(group=Group.empty_group) inp ptype =
+  append vcard ~group:group Name.PHOTO [
+      Parameter.parameter "type" ptype;
+      Parameter.parameter "ENCODING" "b";
+    ] (Value.string_value "")
                   
