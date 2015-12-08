@@ -21,6 +21,6 @@ let () =
                              parameter "type" "HOME";
                            ] (string_value "lord@crocodile.org")) in
   let cp = append_photo_from_file c "botero.jpeg" "JPEG" in
-  print stdout cp
+  print (output_string stdout) cp
   
         

@@ -101,7 +101,7 @@ module Vcard : sig
   val append: t -> ?group:Group.t -> Name.t -> (Parameter.t list) -> Value.t -> t
   val append_photo: t -> ?group:Group.t -> string -> string -> t
   val append_photo_from_file: t -> ?group:Group.t -> string -> string -> t
-  val print: out_channel -> t -> unit
+  val print: (string -> unit) -> t -> unit
                                    
 end = struct
   
@@ -146,16 +146,16 @@ end = struct
                          
   let rec split s out =
     match String.length s with
-    | l when l <= 75 -> output_string out s
+    | l when l <= 75 -> out s
     | l -> 
        let e = Batteries.UTF8.prev s 76 in
-       String.sub s 0 e |> output_string out;
-       output_string out "\r\n ";
+       String.sub s 0 e |> out;
+       out "\r\n ";
        split (String.sub s e (l - e)) out
 
   let print out vcard =
     let open Content_line in
-    output_string out "BEGIN:VCARD\r\nVERSION:4.0\r\n";
+    out "BEGIN:VCARD\r\nVERSION:4.0\r\n";
     vcard.content_lines |> List.iter (fun cl ->
                                let buf = Buffer.create 75 in
                                (match Group.to_string cl.group with 
@@ -174,8 +174,8 @@ end = struct
                                Buffer.add_char buf ':';
                                Value.to_string cl.value |> escape_value |> Buffer.add_string buf;
                                split (Buffer.contents buf) out;
-                               output_string out "\r\n");
-    output_string out "END:VCARD\r\n"
+                               out "\r\n");
+    out "END:VCARD\r\n"
                   
 end
         
