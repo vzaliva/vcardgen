@@ -4,6 +4,7 @@
 *.cmi
 *.a
 *.o
+*.omc
 *.cmx
 *.cmxs
 *.cmxa
@@ -14,7 +15,12 @@ _build/
 # ocamlbuild targets
 *.byte
 *.native
+*.run
+example
 
 # oasis generated files
 setup.data
 setup.log
+
+.omakedb
+.omakedb.lock
