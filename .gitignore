@@ -18,9 +18,4 @@ _build/
 *.run
 example
 
-# oasis generated files
-setup.data
-setup.log
-
-.omakedb
-.omakedb.lock
+vcardgen.install

@@ -1,4 +1,4 @@
-open Vcard_4_0
+open Vcardgen
        
 let () =
   let open Content_line in

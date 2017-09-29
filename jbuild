@@ -1,10 +1,7 @@
 (jbuild_version 1)
 
-(executables
- ((names        (vcard_4_0 example))
-  (public_names (vcard_4_0 example))
-  (libraries (batteries))
- ))
+(library ((name vcardgen) ))
 
-
-
+(install
+ ((section doc)
+  (files (example.ml botero.jpeg))))
