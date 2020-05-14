@@ -8,14 +8,9 @@
 *.cmx
 *.cmxs
 *.cmxa
+.merlin
 
-# ocamlbuild working directory
+# dune working directory
 _build/
-
-# ocamlbuild targets
-*.byte
-*.native
-*.run
-example
 
 vcardgen.install

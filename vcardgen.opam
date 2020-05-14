@@ -5,8 +5,8 @@ homepage: "https://github.com/vzaliva/vcardgen"
 bug-reports: "https://github.com/vzaliva/vcardgen/issues"
 license: "BSD2"
 dev-repo: "https://github.com/vzaliva/vcardgen.git"
-build: ["jbuilder" "build"]
+build: ["dune" "build" "-p" name "-j" jobs]
 depends: [
-  "jbuilder" {build}
+  "dune" {build & >= "1.0"}
   "batteries"
 ]
